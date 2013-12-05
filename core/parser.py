@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-class Partser:
+
+class Parser:
 	
-	def __inti__(self,name):
+	def __init__(self,name):
 	
 		self.rules = []
 		self.buffer = ""
 		self.full_sentence = ""
 		self.flags = [ 0,0,0,0 ] # secces , nl , end_instrc, interupt
 		self.eatch_run = ""
-		self.load_function("function_fld.%s.py" % name)
+		self.load_functions("function_fld.%s" % name)
 		self.load_rules("rules_fld/%s" % name)
 
 	def load_functions(self,function_name):
-		from function_name import *
+		exec "from %s import *" % function_name
 	
 	def load_rules(self,file_name):
 		f = open( file_name, "r" )
@@ -32,15 +33,15 @@ class Partser:
 		for rule in self.rules:
 			if rule[0] == ".":
 				if rule[1] == char :
-					eval(rule[3])
+					exec(rule[3])
 			if rule[0] == ".+":
 				if (type(rule[1]) == str) and (self.buffer == rule[1]):
-					eval(rule[3])
+					exec(rule[3])
 			if rule[0] == "+.":
 				if (type(rule[1]) == list):
 					if self.check_if_match_list(rule[1]):
-						eval(rule[3])
-		eval(self.eatch_run)
+						exec(rule[3])
+		exec(self.eatch_run)
 
 	def check_if_match_list(self,the_list):
 		cursor = 0
