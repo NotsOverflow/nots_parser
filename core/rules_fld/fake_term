@@ -1,0 +1,39 @@
+#
+#
+# run each time unsles diabled via flag
+#
+#
+*:printstr(self,char)
+#
+#
+# check with signle char
+#
+#
+.:"\x0d":rtn(self) # signal flags
+.:"\x03":quit_interupt() # signal flags
+.:"\x1b":arrow(self,char)
+.:"\x7f":errase(self,char)
+#
+#
+# disabled
+#
+#
+n:" ":whitespace() # signal flags
+#
+#
+# check with signle word argument
+#
+#
+.+:"SELECT ":fill_items_var_wn(self,char) # will fill items var with next buffer ( delimited by signal flags )
+.+:"FROM ":fill_table_var_wn(self,char) # will fill items var with next buffer
+.+:"WHERE":sf('get_all_info()','where_filter_function()')
+.+:"OR":sf('check_for_condition_seq()','or_filter_function()')
+.+:"AND":sf('check_for_condition_seq()','and_filter_function()')
+#
+#
+# check with full sentence separated with ; or nl
+#
+#
++.:("SELECT", "*","FROM", "*"):get_all_info(self) # use previously loaded data to answer  , return 1 in succes flag
++.:"clear":clear(self)
++.:"echo":echo(self)
