@@ -1,0 +1,32 @@
+#
+#
+# run each time unsles diabled via flag
+#
+#
+*:printchar(self,char)
+#
+#
+# check with signle char
+#
+#
+.:"\x0d":rtn(self) # signal flags
+.:"\x03":quit_interupt() # signal flags
+.:"\x1b":arrow(self,char)
+.:"\x7f":errase(self,char)
+#
+#
+# disabled
+#
+#
+n:" ":whitespace(self) # signal flags
+#
+#
+# check with signle word argument
+#
+#
+#
+#
+# check with signle word argument on run command
+# ( commands must be cascading if the branch )
+# select 'exp' ( run() #last_line of select ) where 'exp'
+#

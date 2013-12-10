@@ -56,16 +56,11 @@ class Parser:
 			return True
 		else:
 			return False
-	def add_char_to_sentence(self,c):
-		self.full_sentence = "%s%s" % (self.full_sentence,c)
 		
 	def store_buffer_arg(self):
 		tmp = self.buffer
 		if tmp != "":
-			if self.full_sentence != "":
-				self.full_sentence = "%s %s" % (self.full_sentence,self.buffer)
-			else:
-				self.full_sentence = "%s" % self.buffer
+			self.full_sentence = "%s %s" % (self.full_sentence,self.buffer)
 			self.buffer = ""
 		return tmp
 	
@@ -76,49 +71,40 @@ class Parser:
 		
 	def load_first_arg(self):
 		index = 0
-		self.buffer= ""
-		while self.full_sentence[index] != " ":
-			 self.buffer = "%s%s" % (self.buffer, self.full_sentence[index] )
+		self.store_buffer_arg()
+		while self.sentence_full[index] != " ":
+			 self.buffer = "%s%s" % (self.buffer, self.sentence_full[index] )
 			 index = index + 1
-		self.full_sentence = self.full_sentence[index:]
+		self.sentece_full = self.sentence_full[index:]
 		
 	def run(self):
-		found = False
 		self.load_first_arg()
 		for rule in self.rules:
 			if rule[0] == "+.":
 				if self.buffer == rule[1]:
 					exec("self.fl.%s" % rule[2])
-					found = True
-		return found
-		
+	
 	def feed(self,char):
-		for rule in self.rules:
-			if rule[0] == ".":
-				if rule[1] == char :
-					exec("self.fl.%s" % rule[2])
-		if self.flags[3] == 1:
-			self.flags[3] = 0
-			return True
-		self.add_char_to_sentence(char)
-		if char != self.argsep:
-			self.add_char_to_buffer(char)
-		else:
-			self.buffer = ""
-		if self.buffer != "":
+		if char == self.argsep and self.buff != "":
 			for rule in self.rules:	
-				if rule[0] == ".+":
-					if self.buffer.strip() == rule[1]:
+			self.store_buffer_arg()
+			if rule[0] == ".+":
+				if self.buffer == rule[1]:
+					self.store_buffer_arg()
+					exec("self.fl.%s" % rule[2])
+		else:
+			if char != self.argsep:
+				self.buffer = self.buffer + char
+			for rule in self.rules:
+				if rule[0] == ".":
+					if rule[1] == char :
 						exec("self.fl.%s" % rule[2])
-		if self.flags[3] == 1:
-			self.flags[3] = 0
-			return True
 		if self.flags[4] == 1:
 			self.flags[4] = 0
 			char = ""
-		code = compile(self.eatch_run,'<string>','exec')
-		exec code	
-		return True
+		else:
+			code = compile(self.eatch_run,'<string>','exec')
+			exec code	
 		#self.fl.printtofile("%s\n" % (self.buffer))
 		
 		
